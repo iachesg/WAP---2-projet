@@ -1,0 +1,71 @@
+.event-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.event-image-container {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  background: var(--gray-light);
+  overflow: hidden;
+}
+
+.event-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.event-info h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.event-info p {
+  margin: 4px 0;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.event-location {
+  font-size: 0.8rem;
+  text-decoration: underline;
+  color: #555;
+}
+
+.event-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 0.6rem;
+  color: white;
+  letter-spacing: 1px;
+}
+
+.event-actions {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  gap: 10px;
+}
+
+.action-btn {
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.action-btn:hover {
+  background: rgba(255, 255, 255, 1);
+}
