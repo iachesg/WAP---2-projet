@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import type { AppEvent } from '../App';
 import '../styles/map.css';
@@ -31,8 +32,33 @@ interface MapProps {
 export default function Map({ events }: MapProps) {
   const [activeTab, setActiveTab] = useState<'all' | 'local'>('all');
 
-  const localCenter: [number, number] = [49.195, 16.606]; //TODO - získat aktuální polohu uživatele
+  const [localCenter, setLocalCenter] = useState<[number, number]>([49.195, 16.606]);
+  const [isLocating, setIsLocating] = useState(false);
+  const [locationError, setLocationError] = useState<string | null>(null);
   const RADIUS_KM = 20; 
+
+  const handleGetLocation = () => {
+    setIsLocating(true);
+    setLocationError(null);
+
+    if (!navigator.geolocation) {
+      setLocationError('Geolokace není podporována.');
+      setIsLocating(false);
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setLocalCenter([pos.coords.latitude, pos.coords.longitude]);
+        setActiveTab('local');
+        setIsLocating(false);
+      },
+      (err) => {
+        setLocationError('Polohu se nepodařilo zjistit: ' + err.message);
+        setIsLocating(false);
+      }
+    );
+  };
 
   const currentCenter: [number, number] = activeTab === 'all' ? [49.8, 15.5] : localCenter;
   const currentZoom: number = activeTab === 'all' ? 7 : 12;
@@ -62,10 +88,26 @@ export default function Map({ events }: MapProps) {
         </button>
       </div>
 
-      <h2 className="section-title">
-        {activeTab === 'all' && 'Mapa akcí'}
-        {activeTab === 'local' && `Akce ve vašem okolí`}
-      </h2>
+      <div className="map-header-container">
+        <h2 className="section-title">
+          {activeTab === 'all' && 'Mapa akcí'}
+          {activeTab === 'local' && `Akce ve vašem okolí`}
+        </h2>
+
+        <div className="location-action-bar">
+          <button 
+            className="primary-button location-btn" 
+            onClick={handleGetLocation} 
+            disabled={isLocating}
+          >
+            {isLocating ? 'Hledám polohu...' : '📍 Najít moji polohu'}
+          </button>
+          
+          {locationError && (
+            <span className="location-error-text">{locationError}</span>
+          )}
+        </div>
+      </div>
 
       <div className="map-wrapper">
         <MapContainer 
@@ -84,9 +126,20 @@ export default function Map({ events }: MapProps) {
           {displayedEvents.map((event) => (
             <Marker key={event.id} position={[event.lat, event.lng]}>
               <Popup>
-                <strong>{event.title}</strong><br />
-                {event.categories}<br />
-                <small>({Math.round(getDistanceInKm(localCenter[0], localCenter[1], event.lat, event.lng))} km od vás)</small>
+                <div className="map-popup-container">
+                  <strong className="map-popup-title">{event.title}</strong>
+                  <span className="map-popup-category">{event.categories}</span>
+                  <small className="map-popup-distance">
+                    ({Math.round(getDistanceInKm(localCenter[0], localCenter[1], event.lat, event.lng))} km od vás)
+                  </small>
+                  
+                  <Link
+                    to={`/event/${event.id}`} 
+                    className="primary-button map-popup-button"
+                  >
+                    Detail akce
+                  </Link>
+                </div>
               </Popup>
             </Marker>
           ))}

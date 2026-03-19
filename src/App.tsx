@@ -23,6 +23,8 @@ export interface AppEvent {
   ticketsUrl?: string;
   sourceUrl?: string;
   organizerEmail?: string;
+  timestamp?: number;
+  timestampTo?: number;
 }
 
 interface BrnoApiFeature {
@@ -136,7 +138,9 @@ function App() {
             tickets: props.tickets,
             ticketsUrl: props.tickets_url,
             sourceUrl: props.url,
-            organizerEmail: props.organizer_email
+            organizerEmail: props.organizer_email,
+            timestamp: props.date_from,
+            timestampTo: props.date_to
           };
         });
 
@@ -164,7 +168,7 @@ function App() {
           <Route path="/events" element={<Events events={events} toggleSaved={toggleSaved}/>} />
           <Route path="/my-events" element={<MyEvents events={events} toggleSaved={toggleSaved}/>} />
           <Route path="/map" element={<Map events={events} />} />
-          <Route path="/event/:id" element={<EventDetail events={events} /*toggleSaved={toggleSaved} toggleFavorite={toggleFavorite}*/ />} />
+          <Route path="/event/:id" element={<EventDetail events={events} toggleSaved={toggleSaved} toggleFavorite={toggleFavorite}/>} />
         </Routes>
       </main>
     </BrowserRouter>

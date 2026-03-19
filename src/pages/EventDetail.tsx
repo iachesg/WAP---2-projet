@@ -1,13 +1,15 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import type { AppEvent } from '../App';
-import { Calendar, ArrowLeft, Tag, Ticket, Globe, Mail } from 'lucide-react';
+import { Calendar, ArrowLeft, Tag, Ticket, Globe, Mail, Bookmark, Heart } from 'lucide-react';
 import '../styles/detail.css';
 
 interface EventDetailProps {
   events: AppEvent[];
+  toggleSaved: (id: number) => void;
+  toggleFavorite: (id: number) => void;
 }
 
-export default function EventDetail({ events }: EventDetailProps) {
+export default function EventDetail({ events, toggleSaved, toggleFavorite }: EventDetailProps) {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   
@@ -46,15 +48,27 @@ export default function EventDetail({ events }: EventDetailProps) {
             )}
           </div>
 
-          <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem' }}>
-            <button className="primary-button" onClick={() => alert('Uloženo do lokálního kalendáře!')}>
-              Uložit akci
+          <div className="detail-actions-bar">
+            <button 
+              className={`action-btn-detail like-btn ${event.isFavorite ? 'active' : ''}`} 
+              onClick={() => toggleFavorite(event.id)}
+            >
+              <Heart size={18} className="icon" />
+              {event.isFavorite ? 'To se mi líbí' : 'Líbí se mi'}
+            </button>
+
+            <button 
+              className={`action-btn-detail save-btn ${event.isSaved ? 'active' : ''}`} 
+              onClick={() => toggleSaved(event.id)}
+            >
+              <Bookmark size={18} className="icon" />
+              {event.isSaved ? 'Uloženo' : 'Uložit akci'}
             </button>
             
             {event.sourceUrl && (
-              <a href={event.sourceUrl} target="_blank" rel="noreferrer" className="primary-button">
-                <Globe size={18} style={{ display: 'inline', verticalAlign: 'middle', marginRight: '8px' }} />
-                Více informací
+              <a href={event.sourceUrl} target="_blank" rel="noreferrer" className="action-btn-detail globe-btn">
+                <Globe size={18} className="icon" />
+                Zdroj
               </a>
             )}
           </div>

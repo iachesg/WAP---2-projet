@@ -95,3 +95,67 @@
   line-height: 1.6;
   color: #444;
 }
+
+.detail-actions-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--gray-border);
+}
+
+.action-btn-detail {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border-radius: 8px;
+  border: 1px solid var(--gray-border);
+  background-color: transparent;
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.action-btn-detail:hover {
+  background-color: var(--gray-light);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px var(--card-shadow);
+}
+
+.action-btn-detail .icon {
+  color: currentColor;
+  fill: none;
+  transition: fill 0.2s ease;
+}
+
+.like-btn.active {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+}
+
+.like-btn.active .icon {
+  fill: var(--accent-color);
+}
+
+.save-btn.active {
+  border-color: var(--text-primary);
+  color: var(--text-primary);
+}
+
+.save-btn.active .icon {
+  fill: var(--text-primary);
+}
+
+.globe-btn {
+  background-color: var(--gray-light);
+  border-color: transparent;
+}
+
+.globe-btn:hover {
+  background-color: var(--gray-border);
+}

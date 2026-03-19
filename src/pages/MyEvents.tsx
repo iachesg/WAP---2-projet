@@ -20,7 +20,14 @@ export default function MyEvents({ events, toggleSaved }: MyEventsProps) {
       case 'favorite':
         return events.filter(event => event.isFavorite);
       case 'past':
-        return []; 
+        return events.filter(event => {
+          if (!event.isSaved && !event.isFavorite) return false;
+          const endTime = event.timestampTo || event.timestamp;
+          
+          if (!endTime) return false;
+
+          return endTime < Date.now();
+        });
       default:
         return events;
     }
