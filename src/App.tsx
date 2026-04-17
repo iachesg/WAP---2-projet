@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
+import { SearchProvider } from './SearchContext';
 import MyEvents from './pages/MyEvents';
 import Map from './pages/Map';
 import EventDetail from './pages/EventDetail.tsx';
@@ -160,18 +161,20 @@ function App() {
   }
 
   return (
-    <BrowserRouter>
-      <Navbar />
-      <main>
-        <Routes>
-          <Route path="/" element={<Navigate to="/events" replace />} />
-          <Route path="/events" element={<Events events={events} toggleSaved={toggleSaved}/>} />
-          <Route path="/my-events" element={<MyEvents events={events} toggleSaved={toggleSaved}/>} />
-          <Route path="/map" element={<Map events={events} />} />
-          <Route path="/event/:id" element={<EventDetail events={events} toggleSaved={toggleSaved} toggleFavorite={toggleFavorite}/>} />
-        </Routes>
-      </main>
-    </BrowserRouter>
+    <SearchProvider>
+      <BrowserRouter>
+        <Navbar />
+        <main>
+          <Routes>
+            <Route path="/" element={<Navigate to="/events" replace />} />
+            <Route path="/events" element={<Events events={events} toggleSaved={toggleSaved}/>} />
+            <Route path="/my-events" element={<MyEvents events={events} toggleSaved={toggleSaved}/>} />
+            <Route path="/map" element={<Map events={events} />} />
+            <Route path="/event/:id" element={<EventDetail events={events} toggleSaved={toggleSaved} toggleFavorite={toggleFavorite}/>} />
+          </Routes>
+        </main>
+      </BrowserRouter>
+    </SearchProvider>
   );
 }
 

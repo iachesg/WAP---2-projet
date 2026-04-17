@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { useSearch } from '../SearchContext';
 import EventCard from '../components/EventCard';
 import type { AppEvent } from '../App';
 import { SlidersHorizontal, Filter } from 'lucide-react'; 
@@ -13,9 +14,9 @@ type SortOption = 'dateAsc' | 'dateDesc' | 'nameAsc' | 'nameDesc';
 
 export default function Events({ events, toggleSaved }: EventsProps) {
   const [displayCount, setDisplayCount] = useState(50);
-  
   const [sortBy, setSortBy] = useState<SortOption>('dateAsc');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const { searchText } = useSearch();
 
   const uniqueCategories = useMemo(() => {
     const allCategories = events.flatMap(event => {
@@ -26,13 +27,16 @@ export default function Events({ events, toggleSaved }: EventsProps) {
     return Array.from(new Set(allCategories)).sort();
   }, [events]);
 
-  const processedEvents = events.filter(event => {
-    if (selectedCategory === 'all') return true;
-    if (!event.categories) return false;
-    
-    const eventCats = event.categories.split(',').map(cat => cat.trim());
-    return eventCats.includes(selectedCategory);
-  });
+  const processedEvents = events
+    .filter(event => {
+      if (selectedCategory === 'all') return true;
+      if (!event.categories) return false;
+      const eventCats = event.categories.split(',').map(cat => cat.trim());
+      return eventCats.includes(selectedCategory);
+    })
+    .filter(event =>
+      event.title.toLowerCase().includes(searchText.toLowerCase())
+    );
 
   processedEvents.sort((a, b) => {
     switch (sortBy) {
@@ -68,6 +72,7 @@ export default function Events({ events, toggleSaved }: EventsProps) {
       </div>
 
       <div className="filters-bar">        
+        {/* search bar je pouze v navigaci */}
         <div className="filter-wrapper">
           <Filter size={18} className="filter-icon" />
           <select 

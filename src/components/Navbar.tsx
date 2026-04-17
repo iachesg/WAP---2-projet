@@ -3,6 +3,7 @@ import React from 'react';
 import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Search, Calendar, Menu, X } from 'lucide-react';
+import { useSearch } from '../SearchContext';
 import '../styles/navbar.css';
 
 
@@ -26,6 +27,7 @@ export default function Navbar() {
   const mobileSearchInputRef = useRef<HTMLInputElement>(null);
 
   useLockBodyScroll(menuOpen);
+  const { searchText, setSearchText } = useSearch();
 
   useEffect( () => {
     if(mobileSearchOpen){
@@ -74,7 +76,12 @@ export default function Navbar() {
         <div className="navbar-actions">
           <div className="search-bar">
             <Search size={22} />
-            <input type="text" placeholder="Hledat..." />
+            <input
+              type="text"
+              placeholder="Hledat..."
+              value={searchText}
+              onChange={e => setSearchText(e.target.value)}
+            />
           </div>
           <button className="icon-button">
             <Calendar size={22} />
@@ -89,6 +96,8 @@ export default function Navbar() {
             type="text"
             placeholder="Hledat..."
             className="mobile-search-input"
+            value={searchText}
+            onChange={e => setSearchText(e.target.value)}
           />
           <button
             className="mobile-search-close"
