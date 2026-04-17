@@ -55,7 +55,7 @@ function decodeHTMLEntities (text: string | undefined) {
 
 function App() {
   const [events, setEvents] = useState<AppEvent[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const toggleFavorite = (id: number) => {
     setEvents(prevEvents => {
@@ -85,6 +85,9 @@ function App() {
         const response = await fetch(
           'https://services6.arcgis.com/fUWVlHWZNxUvTUh8/arcgis/rest/services/Events/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson'
         );
+        if (!response.ok) {
+          throw new Error('Nepodařilo se načíst data z API.');
+        }
         const data = await response.json();
 
         const storedFavorites = JSON.parse(localStorage.getItem('favorites') || '[]');
@@ -146,19 +149,16 @@ function App() {
         });
 
         setEvents(mappedEvents); 
-      } catch (error) {
+      } catch (error: any) {
+        setError(error?.message || 'Nastala neznámá chyba při načítání dat.');
         console.error("Chyba při stahování dat z API data.brno.cz:", error);
-      } finally {
-        setIsLoading(false); 
       }
     };
 
     fetchBrnoEvents();
   }, []);
 
-  if (isLoading) {
-    return <div style={{ textAlign: 'center', padding: '5rem', color: 'var(--text-primary)' }}>Načítám aktuální akce z Brna...</div>;
-  }
+
 
   return (
     <SearchProvider>
@@ -167,7 +167,7 @@ function App() {
         <main>
           <Routes>
             <Route path="/" element={<Navigate to="/events" replace />} />
-            <Route path="/events" element={<Events events={events} toggleSaved={toggleSaved}/>} />
+            <Route path="/events" element={<Events events={events} toggleSaved={toggleSaved} error={error}/>} />
             <Route path="/my-events" element={<MyEvents events={events} toggleSaved={toggleSaved}/>} />
             <Route path="/map" element={<Map events={events} />} />
             <Route path="/event/:id" element={<EventDetail events={events} toggleSaved={toggleSaved} toggleFavorite={toggleFavorite}/>} />

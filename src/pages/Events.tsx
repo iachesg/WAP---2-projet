@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useSearch } from '../SearchContext';
 import EventCard from '../components/EventCard';
+import SkeletonEventCard from '../components/SkeletonEventCard';
 import type { AppEvent } from '../App';
 import { SlidersHorizontal, Filter } from 'lucide-react'; 
 import '../styles/events.css';
@@ -8,15 +9,23 @@ import '../styles/events.css';
 interface EventsProps {
   events: AppEvent[];
   toggleSaved: (id: number) => void;
+  error?: string | null;
 }
 
 type SortOption = 'dateAsc' | 'dateDesc' | 'nameAsc' | 'nameDesc';
 
-export default function Events({ events, toggleSaved }: EventsProps) {
+export default function Events({ events, toggleSaved, error }: EventsProps) {
   const [displayCount, setDisplayCount] = useState(50);
   const [sortBy, setSortBy] = useState<SortOption>('dateAsc');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const { searchText } = useSearch();
+  const [loading, setLoading] = useState(true);
+
+  
+  useState(() => {
+    const timer = setTimeout(() => setLoading(false), 1000);
+    return () => clearTimeout(timer);
+  });
 
   const uniqueCategories = useMemo(() => {
     const allCategories = events.flatMap(event => {
@@ -104,7 +113,15 @@ export default function Events({ events, toggleSaved }: EventsProps) {
       </div>
 
       <div className="events-grid">
-        {displayedEvents.length > 0 ? (
+        {error ? (
+          <div className="no-results-message" style={{color: 'var(--error-color, #c00)', textAlign: 'center', gridColumn: '1/-1'}}>
+            <h2>Chyba při načítání dat</h2>
+            <p>{error}</p>
+            <button className="primary-button" onClick={() => window.location.reload()} style={{marginTop: '2rem'}}>Zkusit znovu načíst</button>
+          </div>
+        ) : loading ? (
+          Array.from({ length: 6 }).map((_, i) => <SkeletonEventCard key={i} />)
+        ) : displayedEvents.length > 0 ? (
           displayedEvents.map(event => (
             <EventCard key={event.id} event={event} toggleSaved={toggleSaved} />
           ))

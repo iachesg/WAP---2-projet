@@ -10,7 +10,7 @@ interface EventCardProps {
 
 export default function EventCard({ event, toggleSaved }: EventCardProps) {
 
-  function handleSavedClick (e: React.MouseEvent) {
+  function handleSavedClick(e: React.MouseEvent) {
     e.preventDefault(); // Zabrání přechodu na odkaz
     toggleSaved(event.id);
   };
@@ -20,7 +20,6 @@ export default function EventCard({ event, toggleSaved }: EventCardProps) {
       <Link to={`/event/${event.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
         <div className="event-image-container">
           <img src={event.imageUrl} alt={event.title} className="event-image" />
-          
           <div className="event-actions">
             <button className={`action-btn ${event.isSaved ? 'active' : ''}`} onClick={handleSavedClick}>
               <Bookmark size={16} color={event.isSaved ? "var(--accent-color)" : "currentColor"} />
@@ -30,11 +29,10 @@ export default function EventCard({ event, toggleSaved }: EventCardProps) {
             </button>
           </div>
         </div>
-        
-        <div className="event-info">
-          <h3>{event.title}</h3>
-          <p>{event.description}</p>
-          <span className="event-location">{event.categories}</span>
+        <div className="skeleton-content">
+          <div className="skeleton-title" style={{ background: 'none', color: 'var(--text-color)', height: 'auto', width: 'auto', fontWeight: 600, fontSize: '1.1rem', padding: 0 }}>{event.title}</div>
+          <div className="skeleton-description" style={{ background: 'none', color: '#666', height: 'auto', width: 'auto', fontSize: '0.95rem', padding: 0 }}>{event.description}</div>
+          <div className="skeleton-footer" style={{ background: 'none', color: 'var(--accent-color)', height: 'auto', width: 'auto', fontSize: '0.85rem', padding: 0 }}>{event.categories}</div>
         </div>
       </Link>
     </article>
