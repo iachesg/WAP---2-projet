@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { useSearch } from '../SearchContext';
+import { filterEventsByText } from '../utils/filterEvents';
 import EventCard from '../components/EventCard';
 import type { AppEvent } from '../App';
 import '../styles/myEvents.css';
@@ -10,27 +12,34 @@ interface MyEventsProps {
   toggleSaved: (id: number) => void;
 }
 
+
 export default function MyEvents({ events, toggleSaved }: MyEventsProps) {
   const [activeTab, setActiveTab] = useState<TabType>('saved');
+  const { searchText } = useSearch();
 
   const getFilteredEvents = () => {
+    let filtered = [] as AppEvent[];
     switch (activeTab) {
       case 'saved':
-        return events.filter(event => event.isSaved);
+        filtered = events.filter(event => event.isSaved);
+        break;
       case 'favorite':
-        return events.filter(event => event.isFavorite);
+        filtered = events.filter(event => event.isFavorite);
+        break;
       case 'past':
-        return events.filter(event => {
+        filtered = events.filter(event => {
           if (!event.isSaved && !event.isFavorite) return false;
           const endTime = event.timestampTo || event.timestamp;
-          
           if (!endTime) return false;
-
           return endTime < Date.now();
         });
+        break;
       default:
-        return events;
+        filtered = events;
     }
+
+    // Search filter sdílený s Events
+    return filterEventsByText(filtered, searchText);
   };
 
   const displayedEvents = getFilteredEvents();

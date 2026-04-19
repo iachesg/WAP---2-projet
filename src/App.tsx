@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
+import { SearchProvider } from './SearchContext';
 import MyEvents from './pages/MyEvents';
 import Map from './pages/Map';
 import EventDetail from './pages/EventDetail.tsx';
 import Events from './pages/Events.tsx';
+import Calendar from './components/CalendarComponent.tsx';
 
 export interface AppEvent {
   id: number;
@@ -54,7 +56,7 @@ function decodeHTMLEntities (text: string | undefined) {
 
 function App() {
   const [events, setEvents] = useState<AppEvent[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const toggleFavorite = (id: number) => {
     setEvents(prevEvents => {
@@ -84,6 +86,9 @@ function App() {
         const response = await fetch(
           'https://services6.arcgis.com/fUWVlHWZNxUvTUh8/arcgis/rest/services/Events/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson'
         );
+        if (!response.ok) {
+          throw new Error('Nepodařilo se načíst data z API.');
+        }
         const data = await response.json();
 
         const storedFavorites = JSON.parse(localStorage.getItem('favorites') || '[]');
@@ -145,33 +150,33 @@ function App() {
         });
 
         setEvents(mappedEvents); 
-      } catch (error) {
+      } catch (error: any) {
+        setError(error?.message || 'Nastala neznámá chyba při načítání dat.');
         console.error("Chyba při stahování dat z API data.brno.cz:", error);
-      } finally {
-        setIsLoading(false); 
       }
     };
 
     fetchBrnoEvents();
   }, []);
 
-  if (isLoading) {
-    return <div style={{ textAlign: 'center', padding: '5rem', color: 'var(--text-primary)' }}>Načítám aktuální akce z Brna...</div>;
-  }
+
 
   return (
-    <BrowserRouter>
-      <Navbar />
-      <main>
-        <Routes>
-          <Route path="/" element={<Navigate to="/events" replace />} />
-          <Route path="/events" element={<Events events={events} toggleSaved={toggleSaved}/>} />
-          <Route path="/my-events" element={<MyEvents events={events} toggleSaved={toggleSaved}/>} />
-          <Route path="/map" element={<Map events={events} />} />
-          <Route path="/event/:id" element={<EventDetail events={events} toggleSaved={toggleSaved} toggleFavorite={toggleFavorite}/>} />
-        </Routes>
-      </main>
-    </BrowserRouter>
+    <SearchProvider>
+      <BrowserRouter>
+        <Navbar events={events} />
+        <main>
+          <Routes>
+            <Route path="/" element={<Navigate to="/events" replace />} />
+            <Route path="/events" element={<Events events={events} toggleSaved={toggleSaved} error={error}/>} />
+            <Route path="/my-events" element={<MyEvents events={events} toggleSaved={toggleSaved}/>} />
+            <Route path="/map" element={<Map events={events} />} />
+            <Route path="/event/:id" element={<EventDetail events={events} toggleSaved={toggleSaved} toggleFavorite={toggleFavorite}/>} />
+            <Route path="/calendar" element={<Calendar events={events} />} />
+          </Routes>
+        </main>
+      </BrowserRouter>
+    </SearchProvider>
   );
 }
 
