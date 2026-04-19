@@ -1,9 +1,10 @@
-
 import React from 'react';
 import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Search, Calendar, Menu, X } from 'lucide-react';
 import { useSearch } from '../SearchContext';
+import CalendarComponent from './CalendarComponent';
+import type { AppEvent } from '../App';
 import '../styles/navbar.css';
 
 
@@ -21,10 +22,18 @@ function useLockBodyScroll(lock: boolean) {
   }, [lock]);
 }
 
-export default function Navbar() {
+interface NavbarProps {
+  events: AppEvent[];
+}
+
+export default function Navbar({ events }: NavbarProps) {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [mobileSearchOpen, setMobileSearchOpen] = useState(false)
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+  const [calendarOpen, setCalendarOpen] = useState(false);
+  const [calendarMobileOpen, setCalendarMobileOpen] = useState(false);
   const mobileSearchInputRef = useRef<HTMLInputElement>(null);
+  const calendarDropdownRef = useRef<HTMLDivElement>(null); // desktop
+  const calendarMobileDropdownRef = useRef<HTMLDivElement>(null); // mobile
 
   useLockBodyScroll(menuOpen);
   const { searchText, setSearchText } = useSearch();
@@ -34,6 +43,38 @@ export default function Navbar() {
       mobileSearchInputRef.current?.focus();
     }
   },[mobileSearchOpen])
+
+  // Zavřít desktop kalendář při kliknutí mimo
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        calendarDropdownRef.current &&
+        !calendarDropdownRef.current.contains(event.target as Node)
+      ) {
+        setCalendarOpen(false);
+      }
+    };
+    if (calendarOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [calendarOpen]);
+
+  // Zavřít mobilní kalendář při kliknutí mimo
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        calendarMobileDropdownRef.current &&
+        !calendarMobileDropdownRef.current.contains(event.target as Node)
+      ) {
+        setCalendarMobileOpen(false);
+      }
+    };
+    if (calendarMobileOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [calendarMobileOpen]);
 
   const closeMobileSearch = () => {
     setMobileSearchOpen(false);
@@ -70,10 +111,6 @@ export default function Navbar() {
           <Link to="/events" onClick={() => setMenuOpen(false)}>Akce</Link>
           <Link to="/my-events" onClick={() => setMenuOpen(false)}>Moje akce</Link>
           <Link to="/map" onClick={() => setMenuOpen(false)}>Mapa</Link>
-          <Link to="/events" onClick={() => setMenuOpen(false)} className="calendar-menu-btn-mobile">
-            <Calendar size={22} style={{marginRight: 8}} />
-            <span>Kalendář</span>
-          </Link>
         </nav>
  
         {/* Desktop*/}
@@ -87,9 +124,21 @@ export default function Navbar() {
               onChange={e => setSearchText(e.target.value)}
             />
           </div>
-          <button className="icon-button">
-            <Calendar size={22} />
-          </button>
+          <div ref={calendarDropdownRef} className="calendar-dropdown-wrapper">
+            <button 
+              className="icon-button" 
+              aria-label="Kalendář"
+              onClick={() => setCalendarOpen(!calendarOpen)}
+              title="Kalendář uložených akcí"
+            >
+              <Calendar size={22} />
+            </button>
+            {calendarOpen && (
+              <div className="calendar-dropdown">
+                <CalendarComponent events={events} />
+              </div>
+            )}
+          </div>
         </div>
  
         {/* Mobile */}
@@ -121,6 +170,21 @@ export default function Navbar() {
           >
             <Search size={22} />
           </button>
+          <div ref={calendarMobileDropdownRef} className="calendar-mobile-wrapper">
+            <button
+              className="icon-button"
+              aria-label="Kalendář"
+              onClick={() => setCalendarMobileOpen(!calendarMobileOpen)}
+              title="Kalendář uložených akcí"
+            >
+              <Calendar size={22} />
+            </button>
+            {calendarMobileOpen && (
+              <div className="calendar-dropdown-mobile">
+                <CalendarComponent events={events} />
+              </div>
+            )}
+          </div>
           <button
             className="navbar-hamburger"
             aria-label="Otevřít menu"

@@ -248,3 +248,124 @@
     flex-shrink: 0;
   }
 }
+
+/* Calendar Dropdown - Desktop */
+.calendar-dropdown-wrapper {
+  position: relative;
+}
+
+.calendar-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 0.5rem;
+  z-index: 1000;
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Calendar Dropdown - Desktop */
+.calendar-dropdown-wrapper {
+  position: relative;
+}
+
+.calendar-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 0.5rem;
+  z-index: 1000;
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Calendar Dropdown - Mobile */
+.calendar-mobile-wrapper {
+  position: relative;
+}
+
+.calendar-dropdown-mobile {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 999;
+  animation: fadeIn 0.2s ease-out;
+  max-width: 90vw;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* Zmenšit kalendář v dropdownu */
+.calendar-dropdown .calendar-container {
+  max-width: 320px;
+  padding: 1rem;
+}
+
+.calendar-dropdown-mobile .calendar-container {
+  width: auto;
+  max-width: none;
+}
+
+
+@media (max-width: 768px) {
+  .calendar-dropdown {
+    display: none;
+  }
+  
+  .navbar-actions .calendar-dropdown-wrapper {
+    display: none;
+  }
+
+  .calendar-dropdown-mobile {
+    position: fixed;
+    top: 26%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .calendar-dropdown-mobile .calendar-container {
+    width: auto;
+    max-width: 320px;
+    margin: 0 auto;
+  }
+}
+
+@media (min-width: 769px) {
+  .calendar-dropdown-mobile {
+    display: none;
+  }
+
+  .navbar-mobile-controls .calendar-mobile-wrapper {
+    display: none;
+  }
+}

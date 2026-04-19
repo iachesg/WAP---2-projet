@@ -39,7 +39,7 @@ export default function Events({ events, toggleSaved, error }: EventsProps) {
     const tomorrowStart = todayStart + 24 * 60 * 60 * 1000;
     const tomorrowEnd = tomorrowStart + 24 * 60 * 60 * 1000 - 1;
 
-    // Tenhle týden (pondělí-neděle)
+    // this week (monday till sunday)
     const dayOfWeek = now.getDay();
     const daysFromMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
     const weekStartDate = new Date(now);
@@ -47,7 +47,7 @@ export default function Events({ events, toggleSaved, error }: EventsProps) {
     const weekStart = weekStartDate.getTime();
     const weekEnd = weekStart + 7 * 24 * 60 * 60 * 1000 - 1;
 
-    // Tento víkend (sobota-neděle)
+    // saturday-sunday
     const weekendStartDate = new Date(now);
     weekendStartDate.setDate(now.getDate() + (6 - daysFromMonday));
     const weekendStart = weekendStartDate.getTime();
@@ -98,9 +98,35 @@ export default function Events({ events, toggleSaved, error }: EventsProps) {
       const eventCats = event.categories.split(',').map(cat => cat.trim());
       return eventCats.includes(selectedCategory);
     })
-    .filter(event =>
-      event.title.toLowerCase().includes(searchText.toLowerCase())
-    );
+    .filter(event => {
+      const text = searchText.toLowerCase();
+      if (!text) return true;
+      // Hledej v názvu
+      const inTitle = event.title.toLowerCase().includes(text);
+      // Hledej v popisu
+      const inDesc = event.description?.toLowerCase().includes(text);
+      // Hledej v kategoriích
+      const inCats = event.categories?.toLowerCase().includes(text);
+      // Hledej v datech (česky i číslem)
+      const months = ['leden','únor','březen','duben','květen','červen','červenec','srpen','září','říjen','listopad','prosinec'];
+      let inDate = false;
+      if (event.dateFrom) {
+        const dateFrom = event.dateFrom.toLowerCase();
+        inDate = dateFrom.includes(text);
+        // Pokud hledám měsíc česky, zkus najít i číslo měsíce
+        months.forEach((m, idx) => {
+          if (text === m && dateFrom.includes((idx+1).toString().padStart(2,'0'))) inDate = true;
+        });
+      }
+      if (event.dateTo && !inDate) {
+        const dateTo = event.dateTo.toLowerCase();
+        inDate = dateTo.includes(text);
+        months.forEach((m, idx) => {
+          if (text === m && dateTo.includes((idx+1).toString().padStart(2,'0'))) inDate = true;
+        });
+      }
+      return inTitle || inDesc || inCats || inDate;
+    });
 
   if (selectedTimeframe === 'anytime') {
    

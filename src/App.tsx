@@ -6,6 +6,7 @@ import MyEvents from './pages/MyEvents';
 import Map from './pages/Map';
 import EventDetail from './pages/EventDetail.tsx';
 import Events from './pages/Events.tsx';
+import Calendar from './components/CalendarComponent.tsx';
 
 export interface AppEvent {
   id: number;
@@ -163,7 +164,7 @@ function App() {
   return (
     <SearchProvider>
       <BrowserRouter>
-        <Navbar />
+        <Navbar events={events} />
         <main>
           <Routes>
             <Route path="/" element={<Navigate to="/events" replace />} />
@@ -171,6 +172,7 @@ function App() {
             <Route path="/my-events" element={<MyEvents events={events} toggleSaved={toggleSaved}/>} />
             <Route path="/map" element={<Map events={events} />} />
             <Route path="/event/:id" element={<EventDetail events={events} toggleSaved={toggleSaved} toggleFavorite={toggleFavorite}/>} />
+            <Route path="/calendar" element={<Calendar events={events} />} />
           </Routes>
         </main>
       </BrowserRouter>
