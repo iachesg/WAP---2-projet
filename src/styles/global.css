@@ -13,7 +13,7 @@
   --accent-color: #88c0d0;
 
   color-scheme: light dark;
-  
+
   color: var(--text-color);
   background-color: var(--bg-color);
 
@@ -31,7 +31,6 @@ a {
 a:hover {
   color: var(--accent-color);
 }
-
 
 body {
   margin: 0;

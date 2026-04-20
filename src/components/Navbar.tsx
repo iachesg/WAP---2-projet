@@ -1,23 +1,21 @@
-import React from 'react';
-import { useState, useRef, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { Search, Calendar, Menu, X } from 'lucide-react';
-import { useSearch } from '../SearchContext';
-import CalendarComponent from './CalendarComponent';
-import type { AppEvent } from '../App';
-import '../styles/navbar.css';
-
-
+import React from "react";
+import { useState, useRef, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { Search, Calendar, Menu, X } from "lucide-react";
+import { useSearch } from "../useSearch";
+import CalendarComponent from "./CalendarComponent";
+import type { AppEvent } from "../App";
+import "../styles/navbar.css";
 
 function useLockBodyScroll(lock: boolean) {
   React.useEffect(() => {
     if (lock) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     }
     return () => {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     };
   }, [lock]);
 }
@@ -38,16 +36,15 @@ export default function Navbar({ events }: NavbarProps) {
   useLockBodyScroll(menuOpen);
   const { searchText, setSearchText } = useSearch();
 
-    const closeMobileSearch = () => {
-      setMobileSearchOpen(false);
-    };
-  useEffect( () => {
-    if(mobileSearchOpen){
+  const closeMobileSearch = () => {
+    setMobileSearchOpen(false);
+  };
+  useEffect(() => {
+    if (mobileSearchOpen) {
       mobileSearchInputRef.current?.focus();
     }
-  },[mobileSearchOpen])
+  }, [mobileSearchOpen]);
 
-  
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -58,8 +55,9 @@ export default function Navbar({ events }: NavbarProps) {
       }
     };
     if (calendarOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => document.removeEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
+      return () =>
+        document.removeEventListener("mousedown", handleClickOutside);
     }
   }, [calendarOpen]);
 
@@ -73,8 +71,9 @@ export default function Navbar({ events }: NavbarProps) {
       }
     };
     if (calendarMobileOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => document.removeEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
+      return () =>
+        document.removeEventListener("mousedown", handleClickOutside);
     }
   }, [calendarMobileOpen]);
 
@@ -86,7 +85,6 @@ export default function Navbar({ events }: NavbarProps) {
   return (
     <header className="navbar">
       <div className="navbar-container container">
- 
         {/* Logo */}
         <div className="navbar-logo">
           <Link to="/">
@@ -94,16 +92,21 @@ export default function Navbar({ events }: NavbarProps) {
               src="/vut.svg"
               alt="VUT logo"
               className="logo-placeholder"
-              style={{ width: 60, height: 60, objectFit: 'contain', background: 'none' }}
+              style={{
+                width: 60,
+                height: 60,
+                objectFit: "contain",
+                background: "none",
+              }}
             />
           </Link>
         </div>
- 
+
         {/* Desktop nav links */}
         {menuOpen && (
           <div className="navbar-overlay" onClick={() => setMenuOpen(false)} />
         )}
-        <nav className={`navbar-links${menuOpen ? ' open' : ''}`}>
+        <nav className={`navbar-links${menuOpen ? " open" : ""}`}>
           <button
             className="navbar-close"
             aria-label="Zavřít menu"
@@ -111,11 +114,17 @@ export default function Navbar({ events }: NavbarProps) {
           >
             <X size={28} />
           </button>
-          <Link to="/events" onClick={() => setMenuOpen(false)}>Akce</Link>
-          <Link to="/my-events" onClick={() => setMenuOpen(false)}>Moje akce</Link>
-          <Link to="/map" onClick={() => setMenuOpen(false)}>Mapa</Link>
+          <Link to="/events" onClick={() => setMenuOpen(false)}>
+            Akce
+          </Link>
+          <Link to="/my-events" onClick={() => setMenuOpen(false)}>
+            Moje akce
+          </Link>
+          <Link to="/map" onClick={() => setMenuOpen(false)}>
+            Mapa
+          </Link>
         </nav>
- 
+
         {/* Desktop*/}
         <div className="navbar-actions">
           <div className="search-bar">
@@ -124,12 +133,12 @@ export default function Navbar({ events }: NavbarProps) {
               type="text"
               placeholder="Hledat..."
               value={searchText}
-              onChange={e => setSearchText(e.target.value)}
+              onChange={(e) => setSearchText(e.target.value)}
             />
           </div>
           <div ref={calendarDropdownRef} className="calendar-dropdown-wrapper">
-            <button 
-              className="icon-button" 
+            <button
+              className="icon-button"
               aria-label="Kalendář"
               onClick={() => setCalendarOpen(!calendarOpen)}
               title="Kalendář uložených akcí"
@@ -138,14 +147,19 @@ export default function Navbar({ events }: NavbarProps) {
             </button>
             {calendarOpen && (
               <div className="calendar-dropdown">
-                <CalendarComponent events={events} onNavigate={closeBothCalendars} />
+                <CalendarComponent
+                  events={events}
+                  onNavigate={closeBothCalendars}
+                />
               </div>
             )}
           </div>
         </div>
- 
+
         {/* Mobile */}
-        <div className={`navbar-mobile-search${mobileSearchOpen ? ' active' : ''}`}>
+        <div
+          className={`navbar-mobile-search${mobileSearchOpen ? " active" : ""}`}
+        >
           <Search size={22} className="mobile-search-icon" />
           <input
             ref={mobileSearchInputRef}
@@ -153,7 +167,7 @@ export default function Navbar({ events }: NavbarProps) {
             placeholder="Hledat..."
             className="mobile-search-input"
             value={searchText}
-            onChange={e => setSearchText(e.target.value)}
+            onChange={(e) => setSearchText(e.target.value)}
           />
           <button
             className="mobile-search-close"
@@ -163,9 +177,11 @@ export default function Navbar({ events }: NavbarProps) {
             <X size={28} />
           </button>
         </div>
- 
+
         {/* Mobile*/}
-        <div className={`navbar-mobile-controls${mobileSearchOpen ? ' hidden' : ''}`}>
+        <div
+          className={`navbar-mobile-controls${mobileSearchOpen ? " hidden" : ""}`}
+        >
           <button
             className="icon-button"
             aria-label="Hledat"
@@ -173,7 +189,10 @@ export default function Navbar({ events }: NavbarProps) {
           >
             <Search size={22} />
           </button>
-          <div ref={calendarMobileDropdownRef} className="calendar-mobile-wrapper">
+          <div
+            ref={calendarMobileDropdownRef}
+            className="calendar-mobile-wrapper"
+          >
             <button
               className="icon-button"
               aria-label="Kalendář"
@@ -184,7 +203,10 @@ export default function Navbar({ events }: NavbarProps) {
             </button>
             {calendarMobileOpen && (
               <div className="calendar-dropdown-mobile">
-                <CalendarComponent events={events} onNavigate={closeBothCalendars} />
+                <CalendarComponent
+                  events={events}
+                  onNavigate={closeBothCalendars}
+                />
               </div>
             )}
           </div>
@@ -196,7 +218,6 @@ export default function Navbar({ events }: NavbarProps) {
             <Menu size={28} />
           </button>
         </div>
- 
       </div>
     </header>
   );

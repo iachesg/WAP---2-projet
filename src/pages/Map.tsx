@@ -1,12 +1,18 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
-import type { AppEvent } from '../App';
-import '../styles/map.css';
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import type { AppEvent } from "../App";
+import "../styles/map.css";
 
-import 'leaflet/dist/leaflet.css';
+import "leaflet/dist/leaflet.css";
 
-function MapUpdater({ center, zoom }: { center: [number, number], zoom: number }) {
+function MapUpdater({
+  center,
+  zoom,
+}: {
+  center: [number, number];
+  zoom: number;
+}) {
   const map = useMap();
   useEffect(() => {
     map.flyTo(center, zoom, { duration: 1.5 });
@@ -14,14 +20,22 @@ function MapUpdater({ center, zoom }: { center: [number, number], zoom: number }
   return null;
 }
 
-function getDistanceInKm(lat1: number, lon1: number, lat2: number, lon2: number) {
+function getDistanceInKm(
+  lat1: number,
+  lon1: number,
+  lat2: number,
+  lon2: number,
+) {
   const R = 6371;
   const dLat = (lat2 - lat1) * (Math.PI / 180);
   const dLon = (lon2 - lon1) * (Math.PI / 180);
-  const a = 
+  const a =
     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) * Math.sin(dLon / 2) * Math.sin(dLon / 2); 
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)); 
+    Math.cos(lat1 * (Math.PI / 180)) *
+      Math.cos(lat2 * (Math.PI / 180)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return R * c;
 }
 
@@ -30,19 +44,21 @@ interface MapProps {
 }
 
 export default function Map({ events }: MapProps) {
-  const [activeTab, setActiveTab] = useState<'all' | 'local'>('all');
+  const [activeTab, setActiveTab] = useState<"all" | "local">("all");
 
-  const [localCenter, setLocalCenter] = useState<[number, number]>([49.195, 16.606]);
+  const [localCenter, setLocalCenter] = useState<[number, number]>([
+    49.195, 16.606,
+  ]);
   const [isLocating, setIsLocating] = useState(false);
   const [locationError, setLocationError] = useState<string | null>(null);
-  const RADIUS_KM = 20; 
+  const RADIUS_KM = 20;
 
   const handleGetLocation = () => {
     setIsLocating(true);
     setLocationError(null);
 
     if (!navigator.geolocation) {
-      setLocationError('Geolokace není podporována.');
+      setLocationError("Geolokace není podporována.");
       setIsLocating(false);
       return;
     }
@@ -50,23 +66,29 @@ export default function Map({ events }: MapProps) {
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         setLocalCenter([pos.coords.latitude, pos.coords.longitude]);
-        setActiveTab('local');
+        setActiveTab("local");
         setIsLocating(false);
       },
       (err) => {
-        setLocationError('Polohu se nepodařilo zjistit: ' + err.message);
+        setLocationError("Polohu se nepodařilo zjistit: " + err.message);
         setIsLocating(false);
-      }
+      },
     );
   };
 
-  const currentCenter: [number, number] = activeTab === 'all' ? [49.8, 15.5] : localCenter;
-  const currentZoom: number = activeTab === 'all' ? 7 : 12;
+  const currentCenter: [number, number] =
+    activeTab === "all" ? [49.8, 15.5] : localCenter;
+  const currentZoom: number = activeTab === "all" ? 7 : 12;
 
-  const displayedEvents = events.filter(event => {
-    if (activeTab === 'all') return true;
+  const displayedEvents = events.filter((event) => {
+    if (activeTab === "all") return true;
 
-    const distance = getDistanceInKm(localCenter[0], localCenter[1], event.lat, event.lng);
+    const distance = getDistanceInKm(
+      localCenter[0],
+      localCenter[1],
+      event.lat,
+      event.lng,
+    );
 
     return distance <= RADIUS_KM;
   });
@@ -74,15 +96,15 @@ export default function Map({ events }: MapProps) {
   return (
     <div className="container page-container">
       <div className="tabs-container">
-        <button 
-          className={`tab-button ${activeTab === 'all' ? 'active' : ''}`}
-          onClick={() => setActiveTab('all')}
+        <button
+          className={`tab-button ${activeTab === "all" ? "active" : ""}`}
+          onClick={() => setActiveTab("all")}
         >
           Mapa akcí
         </button>
-        <button 
-          className={`tab-button ${activeTab === 'local' ? 'active' : ''}`}
-          onClick={() => setActiveTab('local')}
+        <button
+          className={`tab-button ${activeTab === "local" ? "active" : ""}`}
+          onClick={() => setActiveTab("local")}
         >
           Akce ve vašem okolí
         </button>
@@ -90,19 +112,19 @@ export default function Map({ events }: MapProps) {
 
       <div className="map-header-container">
         <h2 className="section-title">
-          {activeTab === 'all' && 'Mapa akcí'}
-          {activeTab === 'local' && `Akce ve vašem okolí`}
+          {activeTab === "all" && "Mapa akcí"}
+          {activeTab === "local" && `Akce ve vašem okolí`}
         </h2>
 
         <div className="location-action-bar">
-          <button 
-            className="primary-button location-btn" 
-            onClick={handleGetLocation} 
+          <button
+            className="primary-button location-btn"
+            onClick={handleGetLocation}
             disabled={isLocating}
           >
-            {isLocating ? 'Hledám polohu...' : '📍 Najít moji polohu'}
+            {isLocating ? "Hledám polohu..." : "📍 Najít moji polohu"}
           </button>
-          
+
           {locationError && (
             <span className="location-error-text">{locationError}</span>
           )}
@@ -110,7 +132,7 @@ export default function Map({ events }: MapProps) {
       </div>
 
       <div className="map-wrapper">
-        <MapContainer 
+        <MapContainer
           center={[49.8, 15.5]}
           zoom={7}
           scrollWheelZoom={true}
@@ -120,9 +142,9 @@ export default function Map({ events }: MapProps) {
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
-          
+
           <MapUpdater center={currentCenter} zoom={currentZoom} />
-          
+
           {displayedEvents.map((event) => (
             <Marker key={event.id} position={[event.lat, event.lng]}>
               <Popup>
@@ -130,11 +152,20 @@ export default function Map({ events }: MapProps) {
                   <strong className="map-popup-title">{event.title}</strong>
                   <span className="map-popup-category">{event.categories}</span>
                   <small className="map-popup-distance">
-                    ({Math.round(getDistanceInKm(localCenter[0], localCenter[1], event.lat, event.lng))} km od vás)
+                    (
+                    {Math.round(
+                      getDistanceInKm(
+                        localCenter[0],
+                        localCenter[1],
+                        event.lat,
+                        event.lng,
+                      ),
+                    )}{" "}
+                    km od vás)
                   </small>
-                  
+
                   <Link
-                    to={`/event/${event.id}`} 
+                    to={`/event/${event.id}`}
                     className="primary-button map-popup-button"
                   >
                     Detail akce
@@ -145,7 +176,6 @@ export default function Map({ events }: MapProps) {
           ))}
         </MapContainer>
       </div>
-
     </div>
   );
 }

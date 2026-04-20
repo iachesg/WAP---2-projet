@@ -1,5 +1,5 @@
-import React from 'react';
-import '../styles/eventCard.css';
+import React from "react";
+import "../styles/eventCard.css";
 
 const SkeletonEventCard: React.FC = () => (
   <div className="event-card skeleton">

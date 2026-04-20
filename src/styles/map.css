@@ -5,7 +5,7 @@
   border: 1px solid var(--gray-border);
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 
 .leaflet-map {
@@ -95,7 +95,7 @@
 }
 
 .location-error-text {
-  color: #e53e3e; 
+  color: #e53e3e;
   font-weight: 500;
   font-size: 0.9rem;
 }
