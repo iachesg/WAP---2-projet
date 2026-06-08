@@ -1,75 +1,93 @@
-# React + TypeScript + Vite
+# WAP — Frontend (React + TypeScript + Vite)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This repository contains a small React + TypeScript application scaffolded with Vite.
 
-Currently, two official plugins are available:
+**Quick goal:** run the app locally, build for production, and preview the production bundle.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+**Prerequisites**
 
-## React Compiler
+- Node.js 18 or newer (recommended). Verify with:
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+```bash
+node --version
+```
+- Git, if you plan to clone the repo.
 
-Note: This will impact Vite dev & build performances.
+**Install dependencies**
 
-## Expanding the ESLint configuration
+Open the project folder in a terminal and run:
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(["dist"]),
-  {
-    files: ["**/*.{ts,tsx}"],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+This installs dependencies listed in [package.json](package.json).
 
-```js
-// eslint.config.js
-import reactX from "eslint-plugin-react-x";
-import reactDom from "eslint-plugin-react-dom";
+**Run the app in development mode**
 
-export default defineConfig([
-  globalIgnores(["dist"]),
-  {
-    files: ["**/*.{ts,tsx}"],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs["recommended-typescript"],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
+Start the Vite dev server with:
+
+```bash
+npm run dev
 ```
+
+By default Vite serves the app on http://localhost:5173 — open that URL in your browser.
+
+If the port is already in use, Vite will suggest an alternative port in the terminal.
+
+**Build for production**
+
+Create an optimized production build with:
+
+```bash
+npm run build
+```
+
+The output will be placed in the `dist/` directory.
+
+**Preview the production build locally**
+
+After building, verify the production bundle with the preview server:
+
+```bash
+npm run preview
+```
+
+This runs `vite preview` and serves the contents of `dist/` so you can test the production build locally.
+
+**Linting**
+
+Run ESLint across the project with:
+
+```bash
+npm run lint
+```
+
+Note: the repository includes ESLint config files; fixable problems may be reported.
+
+**Common issues & tips**
+
+- If you see TypeScript type errors when building, ensure the installed TypeScript version matches the one in `devDependencies`.
+- If assets like maps (Leaflet) don't display correctly, confirm the app's CSS is loaded (see `src/styles`).
+- If the dev server fails to start, check for an existing process on the same port and kill it, or accept the alternate port Vite offers.
+
+**Useful files**
+
+- Project entry: [src/main.tsx](src/main.tsx)
+- App component: [src/App.tsx](src/App.tsx)
+- Routes / pages: [src/pages](src/pages)
+- Build & scripts: [package.json](package.json)
+
+**Example quick workflow**
+
+```bash
+# clone the repo (if needed)
+git clone <your-repo-url>
+cd <repo-folder>
+
+# install and run
+npm install
+npm run dev
+```
+
+If you'd like, I can also add a brief developer section showing how to run tests or add environment variables — tell me what you prefer.
